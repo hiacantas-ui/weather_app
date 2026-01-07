@@ -1,36 +1,352 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
 
-First, run the development server:
+# 요구사항 명세서 (Web App Specification)
+----------
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 1. 프로젝트 개요
+
+* **목적**: 사용자가 지역을 선택하면 해당 지역의 현재 날씨 및 예보 정보를 직관적으로 제공하는 웹서비스
+* **타겟 사용자**: 일반 사용자 (모바일·데스크톱 모두 고려)
+* **UI/UX 방향**:
+
+  * shadcn 컴포넌트 기반의 모던하고 미니멀한 디자인
+  * Tailwind CSS를 활용한 반응형 레이아웃
+  * 정보는 간결하게, 핵심 지표 위주로 노출
+
+---
+
+## 2. 기술 스택
+
+* **Framework**: Next.js (App Router 기준)
+* **UI Library**: shadcn/ui
+* **Styling**: Tailwind CSS
+* **상태 관리**: React useState / useEffect (규모 확장 시 Zustand 고려)
+* **API 연동**: 외부 날씨 API (예: OpenWeatherMap, WeatherAPI 등)
+* **배포 환경**: Vercel (권장)
+
+---
+
+## 3. 전체 화면 구성 (UI Structure)
+
+### 3.1 공통 레이아웃
+
+* Header
+
+  * 서비스 로고 또는 서비스명
+  * 선택된 지역 표시
+* Main Content
+
+  * 지역 선택 영역
+  * 날씨 정보 카드 영역
+* Footer
+
+  * 데이터 출처 표기
+  * © 서비스명
+
+---
+
+## 4. 주요 기능 명세
+
+## 4.1 지역 선택 기능
+
+### 기능 설명
+
+* 사용자가 지역을 선택하면 해당 지역의 날씨 데이터를 조회
+* 기본값은 “서울” 또는 사용자 최근 선택 지역
+
+### UI 요소
+
+* shadcn `Select` 컴포넌트
+
+  * 시/도 → 구/군 (2단 선택 가능)
+* 또는
+
+  * 검색형 Input + 자동완성 리스트 (Autocomplete)
+
+### 기능 요구사항
+
+* 지역 변경 시 즉시 날씨 데이터 재호출
+* 로딩 상태 표시 (Skeleton UI 사용)
+* 선택 지역 로컬스토리지 저장
+
+---
+
+## 4.2 현재 날씨 정보 표시
+
+### 기능 설명
+
+선택한 지역의 **현재 날씨 상태**를 시각적으로 제공
+
+### 표시 항목
+
+* 현재 기온 (°C)
+* 날씨 상태 아이콘 (맑음, 흐림, 비 등)
+* 체감 온도
+* 습도 (%)
+* 풍속 (m/s)
+
+### UI 구성
+
+* shadcn `Card` 컴포넌트
+* 주요 기온은 가장 크게 강조
+* 날씨 상태에 따라 아이콘 변경
+
+---
+
+## 4.3 단기 예보 (시간/일 단위)
+
+### 기능 설명
+
+* 향후 날씨 변화를 간단히 예측 가능하도록 제공
+
+### 표시 방식
+
+* **시간별 예보**: 가로 스크롤 카드
+* 또는
+* **일별 예보**: 5~7일 리스트 형태
+
+### UI 요소
+
+* shadcn `Tabs`
+
+  * 탭 1: 시간별
+  * 탭 2: 주간 예보
+* 각 항목에 아이콘 + 최고/최저기온 표시
+
+---
+
+## 4.4 날씨 상태별 UI 대응
+
+### 기능 설명
+
+날씨 상태에 따라 UI 분위기 변경
+
+### 적용 요소
+
+* 배경 그라데이션 변경
+
+  * 맑음: 밝은 블루
+  * 비/눈: 그레이 톤
+  * 흐림: 뉴트럴 컬러
+* 아이콘 컬러 변경
+
+---
+
+## 4.5 로딩 및 에러 처리
+
+### 로딩 상태
+
+* 데이터 요청 중
+
+  * Skeleton UI 표시
+  * 버튼 비활성화
+
+### 에러 상태
+
+* API 오류
+* 지역 정보 없음
+
+### 에러 UI
+
+* shadcn `Alert` 컴포넌트 사용
+* “날씨 정보를 불러올 수 없습니다” 메시지 표시
+
+---
+
+## 5. 반응형 대응
+
+### 기준
+
+* Mobile First 설계
+* Tailwind Breakpoint 사용
+
+### 동작
+
+* 모바일: 카드 세로 스택
+* 데스크톱: 그리드 레이아웃 (2~3컬럼)
+
+---
+
+## 6. 접근성 & UX 고려사항
+
+* 키보드 접근 가능 (Select, Tabs)
+* 명확한 색 대비
+* 숫자 정보는 단위 명시
+* 너무 많은 정보 노출 지양 (요약 중심)
+
+---
+
+## 7. 향후 확장 고려 (Optional)
+
+* 즐겨찾기 지역 저장
+* 위치 기반 자동 지역 설정 (Geolocation)
+* 미세먼지 / 자외선 지수 추가
+* 다크모드 지원 (shadcn Theme 활용)
+
+---
+
+## 8. 개발자 전달 핵심 포인트 요약
+
+* shadcn UI 컴포넌트 적극 활용
+* Tailwind 기반 반응형 필수
+* API 연동 시 로딩/에러 상태 분리 처리
+* 지역 선택 → 상태 변경 → 데이터 재호출 구조 명확히
+
+---
+
+원하면 다음 단계로
+
+* **와이어프레임 구조도**
+* **컴포넌트 트리 설계**
+* **API 응답 기준 데이터 매핑 표**
+* **Next.js 폴더 구조 예시**
+
+---
+
+## 개발 구현 단계
+
+### Phase 1: 개발 환경 설정 및 기본 구조 구축
+
+#### 1.1 shadcn/ui 설치 및 초기 설정
+* shadcn/ui 초기화 및 설정
+* 필요한 기본 컴포넌트 설치
+  * Card, Select, Button, Tabs, Alert, Skeleton
+
+#### 1.2 프로젝트 폴더 구조 생성
+```
+src/
+├── components/
+│   ├── ui/              # shadcn 컴포넌트
+│   ├── weather/         # 날씨 관련 커스텀 컴포넌트
+│   └── layout/          # Header, Footer 등
+├── lib/
+│   ├── utils.ts
+│   └── api/             # API 호출 함수
+├── types/               # TypeScript 타입 정의
+└── hooks/               # 커스텀 훅
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### 1.3 환경 변수 설정
+* `.env.local` 파일 생성
+* OpenWeatherMap API 키 설정
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Phase 2: 공통 레이아웃 구현
 
-## Learn More
+#### 2.1 Header 컴포넌트 작성
+* 서비스 로고/명칭
+* 선택된 지역 표시 영역
 
-To learn more about Next.js, take a look at the following resources:
+#### 2.2 Footer 컴포넌트 작성
+* 데이터 출처 표기
+* 저작권 정보
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### 2.3 레이아웃 통합
+* `layout.tsx`에 Header/Footer 통합
+* 반응형 그리드 구조 적용
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### Phase 3: API 연동 및 데이터 처리
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### 3.1 OpenWeatherMap API 연동 로직 구현
+* API 호출 함수 작성 (`lib/api/weather.ts`)
+  * 현재 날씨 조회 함수
+  * 예보 데이터 조회 함수
+* TypeScript 타입 정의 (`types/weather.ts`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+#### 3.2 에러 핸들링 구조 구축
+* API 에러 처리 유틸리티
+* `error.tsx` 바운더리 작성
+
+---
+
+### Phase 4: 핵심 기능 구현
+
+#### 4.1 지역 선택 기능 구현
+* 지역 데이터 준비 (한국 주요 도시 리스트)
+* Select 또는 Autocomplete 컴포넌트 작성
+* 로컬스토리지 저장/불러오기 로직
+
+#### 4.2 현재 날씨 카드 컴포넌트
+* 기온, 날씨 상태, 아이콘 표시
+* 체감온도, 습도, 풍속 표시
+* 반응형 레이아웃 적용
+
+#### 4.3 예보 정보 컴포넌트
+* Tabs 컴포넌트로 시간별/일별 탭 구분
+* 시간별 예보 (가로 스크롤)
+* 일별 예보 (5~7일 리스트)
+
+---
+
+### Phase 5: UX 개선 및 상태 관리
+
+#### 5.1 로딩 상태 처리
+* Skeleton UI 컴포넌트 작성
+* 데이터 로딩 중 상태 표시
+
+#### 5.2 날씨 상태별 UI 변경
+* 날씨 조건에 따른 배경 그라데이션 적용
+* 동적 아이콘 컬러 변경
+
+#### 5.3 에러 상태 UI
+* Alert 컴포넌트로 에러 메시지 표시
+* 재시도 버튼 구현
+
+---
+
+### Phase 6: 반응형 및 접근성 최적화
+
+#### 6.1 반응형 디자인 점검
+* 모바일 레이아웃 (세로 스택)
+* 태블릿/데스크톱 레이아웃 (2~3컬럼 그리드)
+* Tailwind 브레이크포인트 최적화
+
+#### 6.2 접근성(a11y) 개선
+* 키보드 네비게이션 테스트
+* ARIA 레이블 추가
+* 색상 대비 확인
+
+---
+
+### Phase 7: 테스트 및 배포 준비
+
+#### 7.1 기능 테스트
+* 지역 선택 동작 확인
+* API 호출 정상 작동 여부
+* 에러 케이스 테스트
+
+#### 7.2 성능 최적화
+* 이미지 최적화 (next/image)
+* 불필요한 리렌더링 방지
+
+#### 7.3 Vercel 배포
+* 환경 변수 설정
+* 배포 및 동작 확인
+
+---
+
+### Phase 8: 추가 기능 (Optional)
+
+#### 8.1 향후 확장 기능
+* 즐겨찾기 지역 저장
+* Geolocation API 자동 위치 감지
+* 미세먼지/자외선 지수 추가
+* 다크모드 토글
+
+---
+
+## 구현 진행 상태
+
+- [x] Phase 1: 개발 환경 설정 및 기본 구조 구축 ✅
+- [x] Phase 2: 공통 레이아웃 구현 ✅
+- [x] Phase 3: API 연동 및 데이터 처리 ✅
+- [x] Phase 4: 핵심 기능 구현 ✅
+- [x] Phase 5: UX 개선 및 상태 관리 ✅
+- [x] Phase 6: 반응형 및 접근성 최적화 ✅
+- [ ] Phase 7: 테스트 및 배포 준비
+- [ ] Phase 8: 추가 기능 (Optional)
+
+
